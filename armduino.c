@@ -24,6 +24,20 @@ extern void loop(void);				//user loop
 //end GPIO
 
 //Arduino Functions: Time
+//systick ticks
+uint32_t ticks(void) {
+	uint32_t m;					//stores overflow count
+	uint32_t f;					//return the fractions / Systick->VAL
+
+	//use double reads
+	do {
+		m = timer_ticks;
+		f = SysTick->VAL;		//24-bit only
+	} while (m != timer_ticks);
+	//now m and f are atomic
+	return (m - f);				//SysTick is a 24-bit downcounter
+}
+
 //return microseconds
 uint32_t micros(void) {
 	uint32_t m;					//stores overflow count
@@ -56,23 +70,35 @@ uint32_t millis(void) {
 
 //delay milliseconds
 void delay(uint32_t ms) {
+#if 0												//using millis
 	uint32_t start_time = millis();
 
 	while (millis() - start_time < ms) continue;	//wait until desired time runs out
+#else												//usingn ticks
+	uint32_t start_time = ticks();
+	ms *= (SystemCoreClock / 1000);					//convert ms to ticks
+	while (ticks() - start_time < ms) continue;
+#endif
 }
 
 //delay micro seconds
 void delayMicroseconds(uint32_t us) {
+#if 0												//using micros()
 	uint32_t start_time = micros();
 	
 	while (micros() - start_time < us) continue;	//wait until desired time runs out
+#else												//using ticks
+	uint32_t start_time = ticks();
+	us *= (SystemCoreClock / 1000000ul);			//convert us to ticks
+	while (ticks() - start_time < us) continue;
+#endif
 }
 //end Time
 
 
 //Arduino Functions: Advanced IO
 //shift in - from arduino code base / not optimized
-uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder) {
+uint8_t shiftIn(PIN_TypeDef dataPin, PIN_TypeDef clockPin, uint8_t bitOrder) {
 	uint8_t value = 0;
 	uint8_t i;
 
@@ -88,7 +114,7 @@ uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder) {
 }
 
 //shift out - from arduino code base / not optimized
-void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val) {
+void shiftOut(PIN_TypeDef dataPin, PIN_TypeDef clockPin, uint8_t bitOrder, uint8_t val) {
 	uint8_t i;
 
 	for (i = 0; i < 8; i++)  {

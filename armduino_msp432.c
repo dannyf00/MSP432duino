@@ -130,19 +130,19 @@ const PIN2GPIO GPIO_PinDef[]={
 //Arduino Functions: GPIO
 //set a pin mode to INPUT or OUTPUT
 //no error checking on PIN
-inline void pinMode(uint8_t pin, uint8_t mode) {
+inline void pinMode(PIN_TypeDef pin, uint8_t mode) {
 	if (mode==INPUT) GIO_IN(GPIO_PinDef[pin].gpio, GPIO_PinDef[pin].mask);
 	else GIO_OUT(GPIO_PinDef[pin].gpio, GPIO_PinDef[pin].mask);
 }
 
 //set / clear a pin
-inline void digitalWrite(uint8_t pin, uint8_t val) {
+inline void digitalWrite(PIN_TypeDef pin, uint8_t val) {
 	if (val==LOW) GIO_CLR(GPIO_PinDef[pin].gpio, GPIO_PinDef[pin].mask);
 	else GIO_SET(GPIO_PinDef[pin].gpio, GPIO_PinDef[pin].mask);
 }
 
 //read a pin
-inline int digitalRead(uint8_t pin) {
+inline int digitalRead(PIN_TypeDef pin) {
 	return (GIO_GET(GPIO_PinDef[pin].gpio, GPIO_PinDef[pin].mask))?HIGH:LOW;
 }
 //end GPIO

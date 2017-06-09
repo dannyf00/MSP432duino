@@ -51,10 +51,11 @@
 
 //arduino-specific defs
 #define INPUT				0
-#define OUTPUT				(!INPUT)
+#define OUTPUT				1									//(!INPUT)
+#define INPUT_PULLUP
 
 #define LOW					0
-#define HIGH				(!LOW)
+#define HIGH				1									//(!LOW)
 
 #define PI 					3.1415926535897932384626433832795
 #define HALF_PI 			(PI / 2)							//1.5707963267948966192313216916398
@@ -128,6 +129,7 @@ extern void setup(void);
 extern void loop(void);
 
 //time base
+uint32_t ticks(void);
 uint32_t millis(void);
 uint32_t micros(void);
 void delay(uint32_t ms);
@@ -135,20 +137,20 @@ void delayMicroseconds(uint32_t us);
 
 //advanced io
 //shiftin/out: bitOrder = MSBFIRST or LSBFIRST
-uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);
-void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);
+uint8_t shiftIn(PIN_TypeDef dataPin, PIN_TypeDef clockPin, uint8_t bitOrder);
+void shiftOut(PIN_TypeDef dataPin, PIN_TypeDef clockPin, uint8_t bitOrder, uint8_t val);
 
 //================chip-specific functions, user-implemented for target chip
 //gpio functions - chip-specific
-inline void pinMode(uint8_t pin, uint8_t mode);
-inline void digitalWrite(uint8_t pin, uint8_t mode);
-inline int digitalRead(uint8_t pin);
+inline void pinMode(PIN_TypeDef pin, uint8_t mode);
+inline void digitalWrite(PIN_TypeDef pin, uint8_t mode);
+inline int digitalRead(PIN_TypeDef pin);
 
 //analogWrite()/pwm output - chip-specific
-void analogWrite(uint32_t dc);
+//void analogWrite(uint32_t dc);
 
 //analogRead() - chip-specific
-int32_t analogRead();
+//int32_t analogRead();
 
 //Serial IO
 
